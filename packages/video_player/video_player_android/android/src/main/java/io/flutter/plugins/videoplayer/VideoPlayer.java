@@ -58,6 +58,8 @@ final class VideoPlayer {
 
   @VisibleForTesting boolean isInitialized = false;
 
+  private boolean isSeeking = false;
+
   private final VideoPlayerOptions options;
 
   VideoPlayer(
@@ -214,6 +216,8 @@ final class VideoPlayer {
                 isInitialized = true;
                 sendInitialized();
               }
+              
+              sendSeeking(false);
             } else if (playbackState == Player.STATE_ENDED) {
               Map<String, Object> event = new HashMap<>();
               event.put("event", "completed");
@@ -242,6 +246,15 @@ final class VideoPlayer {
     // iOS supports a list of buffered ranges, so here is a list with a single range.
     event.put("values", Collections.singletonList(range));
     eventSink.success(event);
+  }
+
+  void sendSeeking(boolean seeking) {
+    if (isSeeking != seeking) {
+      isSeeking = seeking;
+      Map<String, Object> event = new HashMap<>();
+      event.put("event", isSeeking ? "seekingStart" : "seekingEnd");
+      eventSink.success(event);
+    }
   }
 
   private static void setAudioAttributes(ExoPlayer exoPlayer, boolean isMixMode) {
@@ -276,6 +289,7 @@ final class VideoPlayer {
   }
 
   void seekTo(int location) {
+    sendSeeking(true);
     exoPlayer.seekTo(location);
   }
 

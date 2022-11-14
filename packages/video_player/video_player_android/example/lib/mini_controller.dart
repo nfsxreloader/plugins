@@ -35,6 +35,7 @@ class VideoPlayerValue {
     this.isInitialized = false,
     this.isPlaying = false,
     this.isBuffering = false,
+    this.isSeeking = false,
     this.playbackSpeed = 1.0,
     this.errorDescription,
   });
@@ -66,6 +67,9 @@ class VideoPlayerValue {
 
   /// True if the video is currently buffering.
   final bool isBuffering;
+
+  /// True if the video is currently seeking into another position.
+  final bool isSeeking;
 
   /// The current speed of the playback.
   final double playbackSpeed;
@@ -112,6 +116,7 @@ class VideoPlayerValue {
     bool? isInitialized,
     bool? isPlaying,
     bool? isBuffering,
+    bool? isSeeking,
     double? playbackSpeed,
     String? errorDescription,
   }) {
@@ -123,6 +128,7 @@ class VideoPlayerValue {
       isInitialized: isInitialized ?? this.isInitialized,
       isPlaying: isPlaying ?? this.isPlaying,
       isBuffering: isBuffering ?? this.isBuffering,
+      isSeeking: isSeeking ?? this.isSeeking,
       playbackSpeed: playbackSpeed ?? this.playbackSpeed,
       errorDescription: errorDescription ?? this.errorDescription,
     );
@@ -242,6 +248,12 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
           break;
         case VideoEventType.bufferingEnd:
           value = value.copyWith(isBuffering: false);
+          break;
+        case VideoEventType.seekingStart:
+          value = value.copyWith(isSeeking: true);
+          break;
+        case VideoEventType.seekingEnd:
+          value = value.copyWith(isSeeking: false);
           break;
         case VideoEventType.unknown:
           break;

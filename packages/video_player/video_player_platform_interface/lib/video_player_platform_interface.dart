@@ -279,6 +279,12 @@ enum VideoEventType {
   /// The video stopped to buffer.
   bufferingEnd,
 
+  /// Started setting the video position to a [Duration].
+  seekingStart,
+
+  /// The video position has been settled to a [Duration].
+  seekingEnd,
+
   /// An unknown event has been received.
   unknown,
 }
