@@ -404,12 +404,19 @@ NS_INLINE UIViewController *rootViewController() {
 }
 
 - (void)seekTo:(int)location {
+  _eventSink(@{@"event" : @"seekingStart"});
+
   // TODO(stuartmorgan): Update this to use completionHandler: to only return
   // once the seek operation is complete once the Pigeon API is updated to a
   // version that handles async calls.
   [_player seekToTime:CMTimeMake(location, 1000)
       toleranceBefore:kCMTimeZero
-       toleranceAfter:kCMTimeZero];
+       toleranceAfter:kCMTimeZero
+       completionHandler: ^(BOOL finished) {
+        if (finished) {
+          _eventSink(@{@"event" : @"seekingEnd"});
+        }
+       }];
 }
 
 - (void)setIsLooping:(BOOL)isLooping {
